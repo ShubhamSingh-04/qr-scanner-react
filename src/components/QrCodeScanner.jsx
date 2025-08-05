@@ -14,7 +14,7 @@ const QrCodeScanner = () => {
         (result) => {
           setQrResult(result.data);
           // Optionally, stop scanning after a successful scan:
-          scannerRef.current.stop();
+          // scannerRef.current.stop();
         },
         {
           onDecodeError: (err) => setErrorMsg(err.message || String(err)),
@@ -37,19 +37,18 @@ const QrCodeScanner = () => {
   };
 
   return (
-    <div>
-      <h1>QR Code Scanner</h1>
-      {qrResult ? (
-        <div>
-          <p><strong>Result:</strong> {qrResult}</p>
-          <button onClick={handleRescan}>Scan Again</button>
-        </div>
-      ) : (
+    <div className="flex flex-col items-center p-4">
+      <h1 className="text-2xl font-bold mb-4">QR Code Scanner</h1>
+      {(
         <>
-          <video ref={videoRef} style={{ width: 320, height: 240 }} />
-          {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
+          <video
+            ref={videoRef}
+            className="w-[80vw] sm:w-[50vw] h-auto max-h-[60vh] border border-gray-300 rounded"
+          />
+          {!qrResult && errorMsg && <p className="mt-2 text-red-600">{errorMsg}</p>}
         </>
       )}
+      <p className="mb-4"><strong>Result:</strong> {qrResult}</p>
     </div>
   );
 };
