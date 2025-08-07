@@ -1,9 +1,13 @@
+import { markAttendance } from './attendance.api.js';
 import { markBreakfastDay2, markDinnerDay1, markLunchDay1 } from './meal.api.js'
 
 export default async function dispatchAPI(route, data) {
     const normalizedRoute = route.trim().toLowerCase();
 
     switch (normalizedRoute) {
+        case '/day1-attendance/mark-attendance':
+            return markAttendance(data?.memberUniqueCode)
+            
         case '/day1-lunch/mark-done':
             return markLunchDay1(data?.memberUniqueCode);
 

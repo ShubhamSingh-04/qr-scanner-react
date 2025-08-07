@@ -1,20 +1,16 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ActivityButtons from "../components/ActivityButtons";
+import UpdateButtons from "../components/UpdateButtons";
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
     <div className="max-w-md mx-auto p-6 text-center border-2 border-white m-auto">
-      <h1 className="text-3xl font-bold mb-4">Welcome to Code Vault</h1>
-      <p className="text-white mb-8">
+      <h1 className="text-white mb-8 text-lg font-bold">
         Mark attendance for the event.
-      </p>
-
-
-    <ActivityButtons />
-      
+      </h1>
+    <UpdateButtons />
     </div>
   );
 }

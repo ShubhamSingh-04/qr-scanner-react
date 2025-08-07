@@ -3,10 +3,12 @@ import QrCodeScanner from './components/QrCodeScanner.jsx'
 import QRScannerPage from './pages/QRScannerPage.jsx'
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home.jsx'
+import Navbar from './components/Navbar.jsx'
 
 function App() {
   return (
     <>
+    <Navbar />
       <Routes>
         <Route path='/' element={<Home />} />
 
