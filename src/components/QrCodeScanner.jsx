@@ -14,10 +14,21 @@ const QrCodeScanner = () => {
 
   const [qrResult, setQrResult] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [dataToSend, setDataToSend] = useState('');
-  const [prevQrResult, setPrevQrResult] = useState('');
+  // const [dataToSend, setDataToSend] = useState('');
+  const [prevQrResult, setPrevQrResult] = useState('prevResult');
+  const [statusList, setStatusList] = useState([]);
 
   const latestQrResultRef = useRef(qrResult);
+
+
+  const addItem = (newItem) => {
+    setStatusList(prevItems => {
+      if (prevItems[0]?.unique_code === newItem?.unique_code) return prevItems;
+      console.log('Prev items[0] '+ prevItems[0] + ' newItem: '+ newItem)
+      // const exists = prevItems.some(item => JSON.stringify(item) === JSON.stringify(newItem));
+      return [newItem, ...prevItems];
+    });
+  };
 
   useEffect(() => {
     latestQrResultRef.current = qrResult;
@@ -28,19 +39,21 @@ const QrCodeScanner = () => {
     if (videoRef.current) {
       scannerRef.current = new QrScanner(
         videoRef.current,
-        async(result) => {
+        async (result) => {
           setPrevQrResult(latestQrResultRef.current);
           console.log(1)
           setQrResult(result.data);
           setErrorMsg('');
-          setDataToSend(`{CODE: ${result.data}, for: ${path}}`);
+          // setDataToSend(`{CODE: ${result.data}, for: ${path}}`);
 
 
-
-          if(qrResult != prevQrResult){
-            const res = await dispatchAPI(path, {memberUniqueCode: result.data})
+          if ((prevQrResult != qrResult) && (result.data)) {
+            const res = await dispatchAPI(path, { memberUniqueCode: result.data });
+            // setStatusList(prev => [res, ...prev])
+            addItem(res)
             console.log(res)
           }
+
 
 
           scannerRef.current.stop();
@@ -48,7 +61,7 @@ const QrCodeScanner = () => {
             scannerRef.current?.start().catch((err) =>
               setErrorMsg(err.message || String(err))
             );
-          }, 500);
+          }, 2000);
         },
 
         {
@@ -71,7 +84,7 @@ const QrCodeScanner = () => {
   return (
     <div className="flex flex-col items-center p-4">
       <h1 className="text-2xl font-bold mb-4">QR Code Scanner</h1>
-       <h1 className="text-2xl font-bold mb-4">{path}</h1>
+      <h1 className="text-2xl font-bold mb-4">{path}</h1>
 
 
       <video
@@ -86,14 +99,25 @@ const QrCodeScanner = () => {
         {qrResult || <span className="text-gray-500">Waiting for scan...</span>}
       </p>
 
-      <p className="mt-4 text-lg">
+      {/* <p className="mt-4 text-lg">
         <strong>Data to be sent:</strong>{' '}
         {dataToSend || <span className="text-gray-500">No data to send</span>}
-      </p>
+      </p> */}
 
       <p className="mt-4 text-lg">
         <strong>Prev QR:</strong>{' '}
         {prevQrResult ? prevQrResult : <span className="text-gray-500">No Prev QR found</span>}
+      </p>
+
+
+      <p className="mt-4 text-lg">
+        <strong>Status List:</strong>{' '}
+        {statusList ?
+          (statusList.map((ele, index) => {
+            return (
+              <p key={index} class={ele.message == `Already 'Done'` ? 'text-red-500' : ''}> {`${ele.unique_code} ${ele.name} ${ele.message}`}</p>
+            )
+          })) : ''}
       </p>
     </div>
   );
